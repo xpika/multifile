@@ -5,4 +5,4 @@ main = do
   
 
 
-unlines = takeWhile (/="") $ unfoldr (Just .(\(x,y)->(x, tail y)) . span (/= '\n'))
+unlines = takeWhile (/="") $ unfoldr (Just .(\(x,y)->(x, dropWhile (=='\n') y)) . span (/= '\n'))
