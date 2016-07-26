@@ -5,4 +5,4 @@ main = do
   
 
 
-unlines = map snd  $ filter fst $ zip (cycle [True,False])  $ groupBy (\x y -> not $ (x/='\n') /= (y /='\n')) 
+unlines = takeWhile (/="") $ unfoldr (Just .(\(x,y)->(x, tail y)) . span (/= '\n'))
