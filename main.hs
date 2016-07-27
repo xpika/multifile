@@ -1,8 +1,18 @@
 import System.IO
+import Data.List
+
 
 main = do  
   x <- getContents
   
 
+newLines = takeOdd.  sepBy (=='\n')
 
-unlines = takeWhile (/="") $ unfoldr (Just .(\(x,y)->(x, dropWhile (=='\n') y)) . span (/= '\n'))
+takeOdd  = map snd . filter fst . zip (cycle [True,False])
+
+sepBy p = takeWhile (not  . null) 
+          . concat
+          . unfoldr 
+            (Just 
+             . (\(x,y)->([x,take 1 y],drop 1 y))
+             . break p)
