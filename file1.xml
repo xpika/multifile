@@ -1,0 +1,12 @@
+<multifile>
+ <file path="file1.txt">
+  <![CDATA[
+   Here lies a file
+  ]]>
+ </file>
+ <file path="file2.txt">
+  <![CDATA[
+   Here also lies a file
+  ]]>
+ </file>
+</multifile>
