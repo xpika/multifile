@@ -1,0 +1,4 @@
+<!ELEMENT multifile (file*)>
+<!ELEMENT file (#PCDATA)>
+<!ATTLIST file path CDATA #REQUIRED>
+   
