@@ -1,6 +1,5 @@
 module Main where
 
-import Text.XMLParser
 import System.Environment
 import System.IO
 import Text.XML.HaXml.XmlContent.Haskell
