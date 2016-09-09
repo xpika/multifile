@@ -1,2 +1,4 @@
 # multifile
-WIP 
+
+
+cat test.xml |  multifile 
