@@ -13,10 +13,10 @@ name:                multifile
 version:             0.1.0.0
 
 -- A short (one-line) description of the package.
--- synopsis:            
+synopsis: create many files from one
 
 -- A longer description of the package.
--- description:         
+description:         saves the contents of files from a spefically defined xml document
 
 -- URL for the project homepage or repository.
 homepage:            xy30.com
