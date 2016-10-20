@@ -10,7 +10,7 @@ create xs = do
  files <- forM xs $ \filePath -> do
    content <- readFile filePath
    return ( File (File_Attrs filePath) content )
- return (show $ htmlprint $ files)
+ return (show $ htmlprint $ toContents $ Multifile files)
 
 main :: IO ()
 main = do 
