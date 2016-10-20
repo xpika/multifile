@@ -7,11 +7,10 @@ import Extsubset
 import Data.Either
 
 create xs = do
- files <- forM (xs) $ \x -> do
-   content <- readFile x
-   let q <- ( File (File_Attrs x) )
- return (show $ htmlprint $ files)  
-  
+ files <- forM xs $ \filePath -> do
+   content <- readFile filePath
+   return ( File (File_Attrs filePath) content )
+ return (show $ htmlprint $ files)
 
 main :: IO ()
 main = do 
@@ -21,7 +20,7 @@ main = do
            x <- getContents    
            let p = (readXml x :: Either String Multifile)
            either print processFiles p
-         '-':'c':'r':'e':'a':'t':'e':' ':xs' -> create xs' >>= putStr
+         "-create":xs' -> create xs' >>= putStr
          _ -> putStr "unknown usage"
 
 processFiles (Multifile xs) = mapM_ processFile xs
