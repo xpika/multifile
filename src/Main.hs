@@ -2,9 +2,12 @@ module Main where
 
 import System.Environment
 import System.IO
+import Text.XML.HaXml
 import Text.XML.HaXml.XmlContent.Haskell
+ 
 import Extsubset
 import Data.Either
+import Control.Monad
 
 create xs = do
  files <- forM xs $ \filePath -> do
