@@ -14,8 +14,8 @@ create xs = do
 
 main :: IO ()
 main = do 
-       xs <- getArgs
-       case xs of 
+       args <- getArgs
+       case args of 
          [] -> do
            x <- getContents    
            let p = (readXml x :: Either String Multifile)
