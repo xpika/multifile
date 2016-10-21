@@ -4,5 +4,6 @@ dist
 *.swl
 *.swn
 *.swp
+*.swk
 *.o
 *.hi

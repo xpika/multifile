@@ -8,12 +8,18 @@ import Text.XML.HaXml.XmlContent.Haskell
 import Extsubset
 import Data.Either
 import Control.Monad
+import System.Directory
 
-create xs = do
+create' xs = do
  files <- forM xs $ \filePath -> do
    content <- readFile filePath
    return ( File (File_Attrs filePath) content )
  return (show $ htmlprint $ toContents $ Multifile files)
+
+create xs = create' xs >>= putStr
+
+
+dir x = getDirectoryContents x >>= create 
 
 main :: IO ()
 main = do 
@@ -23,8 +29,14 @@ main = do
            x <- getContents    
            let p = (readXml x :: Either String Multifile)
            either print processFiles p
-         "-create":xs' -> create xs' >>= putStr
-         _ -> putStr "unknown usage"
+         x -> z x
+ where 
+ z ("-create":xs) = create xs
+ z ("-c":xs) = create xs
+ z ("-dir":x:[]) = dir x
+ z _             = putStr "unknown usage"
 
 processFiles (Multifile xs) = mapM_ processFile xs
 processFile (File (File_Attrs path) content) = writeFile path content
+
+
