@@ -10,6 +10,9 @@ import Data.Either
 import Control.Monad
 import System.Directory
 
+import Options.Applicative
+
+
 create' xs = do
  files <- forM xs $ \filePath -> do
    content <- readFile filePath
@@ -18,6 +21,7 @@ create' xs = do
 
 create xs = create' xs >>= putStr
 
+ -- data Args = Args {
 
 dir x = getDirectoryContents x >>= create 
 
