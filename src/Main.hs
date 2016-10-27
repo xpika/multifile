@@ -12,12 +12,13 @@ import System.Directory
 
 import Options.Applicative
 
+import Text.PrettyPrint
 
 create' xs = do
  files <- forM xs $ \filePath -> do
    content <- readFile filePath
    return ( File (File_Attrs filePath) content )
- return (show $ htmlprint $ toContents $ Multifile files)
+ return (render $ htmlprint $ toContents $ Multifile files)
 
 create xs = create' xs >>= putStr
 
