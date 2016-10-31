@@ -10,19 +10,32 @@ import Data.Either
 import Control.Monad
 import System.Directory
 
-import Options.Applicative
-
 import Text.PrettyPrint
+import Data.Maybe
+import Data.Either
 
-create' xs = do
+import Control.Monad.Trans.Except
+import Control.Monad.Trans.Class 
+
+isRegularPath :: FilePath -> Bool 
+isRegularPath f = f /= "." && f /= ".."
+
+isRegularDirectory f = fmap (== isRegularPath f) (doesDirectoryExist f) 
+
+doesPathExist' f = liftM2 (||) (isRegularDirectory f) (doesFileExist f)
+
+create' xs = runExceptT $ do
  files <- forM xs $ \filePath -> do
-   content <- readFile filePath
-   return ( File (File_Attrs filePath) content )
+   b <- lift $ doesPathExist' filePath
+   if b then do
+     content <- lift $ readFile filePath
+     return (File (File_Attrs filePath) content )
+   else throwE filePath
  return (render $ htmlprint $ toContents $ Multifile files)
 
-create xs = create' xs >>= putStr
-
- -- data Args = Args {
+create xs = create' xs >>= \x -> case x of 
+   (Left x) -> putStrLn "unknown file "
+   (Right x) -> putStr x
 
 dir x = getDirectoryContents x >>= create 
 
@@ -38,7 +51,6 @@ main = do
  where 
  z ("-create":xs) = create xs
  z ("-c":xs) = create xs
- z ("-dir":x:[]) = dir x
  z _             = putStr "unknown usage"
 
 processFiles (Multifile xs) = mapM_ processFile xs
