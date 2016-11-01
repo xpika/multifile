@@ -42,12 +42,6 @@ create xs = create' xs >>= \x -> case x of
 cdatafy x = "<![CDATA[" ++ x ++ "]]>"
 
 
-{-
-normalise :: Content a -> Content ()
-normalise a = a
--}
-
-
 g = 
  (\ ch ->
       let

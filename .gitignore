@@ -1,9 +1,5 @@
 dist
-*.swo
-*.swm
-*.swl
-*.swn
-*.swp
-*.swk
+.*.sw.
+*.sw*
 *.o
 *.hi
