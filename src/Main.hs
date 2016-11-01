@@ -31,10 +31,10 @@ create' xs = runExceptT $ do
      content <- lift $ readFile filePath
      return (File (File_Attrs filePath) content )
    else throwE filePath
- return (render $ htmlprint $ toContents $ Multifile files)
+ return (render $ htmlprint $ xmlEscapeContent  stdXmlEscaper $ toContents $ Multifile files)
 
 create xs = create' xs >>= \x -> case x of 
-   (Left x) -> putStrLn "unknown file "
+   (Left x) -> putStrLn ("unknown file "++x)
    (Right x) -> putStr x
 
 dir x = getDirectoryContents x >>= create 
