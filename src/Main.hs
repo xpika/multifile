@@ -26,15 +26,29 @@ isRegularDirectory f = fmap (== isRegularPath f) (doesDirectoryExist f)
 
 doesPathExist' f = liftM2 (||) (isRegularDirectory f) (doesFileExist f)
 
-create' xs = runExceptT $ do
- files <- forM xs $ \filePath -> do
-   b <- lift $ doesPathExist' filePath
-   if b then do
-     content <- lift $ readFile filePath
-     return (File (File_Attrs filePath) content )
-   else throwE filePath
- return (render $ htmlprint $ map myFun $ toContents $ Multifile files)
+create'' dirStack xs = do
+ files <- forM (filter isRegularPath xs) $ \filePath -> do
+   let filePath' = dirStack++filePath
+   properFile <- lift $ doesFileExist filePath'
+   properDir <- lift $ doesDirectoryExist filePath'
+   if properDir then do
+     filePaths <- lift $ listDirectory filePath'
+     files' <- create'' (dirStack ++ ((filter (/='/') filePath) ++ "/")) filePaths
+     return files'
+   else if properFile then do
+     content <- lift $ readFile filePath'
+     return [File (File_Attrs filePath') content ]
+   else  
+     throwE filePath'
+ return (concat files)
+
+create' files =runExceptT $ do 
+   files' <- create'' [] files
+   return $ (render $ htmlprint $ map myFun $ toContents $ Multifile files')
+
+
 s = xmlEscapeContent  stdXmlEscaper 
+
 create xs = create' xs >>= \x -> case x of 
    (Left x) -> putStrLn ("unknown file "++x)
    (Right x) -> putStr x
