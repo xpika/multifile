@@ -1,5 +1,9 @@
 module Main where
 
+import System.Process
+import System.IO
+import System.Directory
+
 import System.Environment
 import System.IO
 import Text.XML.HaXml
@@ -50,8 +54,9 @@ create' files =runExceptT $ do
 s = xmlEscapeContent  stdXmlEscaper 
 
 create xs = create' xs >>= \x -> case x of 
-   (Left x) -> putStrLn ("unknown file "++x)
+   (Left x) -> putStrLn ("unknown file "++x++"\n")
    (Right x) -> putStr x
+
 
 cdatafy x = "<![CDATA[" ++ x ++ "]]>"
 
@@ -78,23 +83,41 @@ myFun  x = x
 
 myFun' (Elem a b cs) = Elem a b (map myFun cs)
 
-dir x = getDirectoryContents x >>= create 
 
 main :: IO ()
 main = do 
        args <- getArgs
        case args of 
          [] -> do
-           x <- getContents    
-           let p = (readXml x :: Either String Multifile)
-           either print processFiles p
+           x <- getContents       
+           extractMultiFile x
          x -> z x
  where 
  z ("-create":xs) = create xs
  z ("-c":xs) = create xs
+ z ("-edit":xs) = edit xs
+ z ("-e":xs) = edit xs
  z _             = putStr "unknown usage"
+
+edit xs = do
+ dir <- getTemporaryDirectory
+ (filename,handle) <- openTempFile dir "a"
+ hClose handle
+ eitherMultifile <- create' xs
+ case eitherMultifile of 
+  (Right multifile) -> do
+    writeFile filename multifile
+    maybeEditor <- lookupEnv "EDITOR"
+    let editor = fromMaybe "vim" maybeEditor
+    system (editor++" "++filename)
+    x <- readFile filename
+    extractMultiFile x
+  (Left errorMsg) -> putStr errorMsg 
+ return ()
+
+extractMultiFile x = do 
+        let p = (readXml x :: Either String Multifile)
+        either print processFiles p
 
 processFiles (Multifile xs) = mapM_ processFile xs
 processFile (File (File_Attrs path) content) = writeFile path content
-
-
