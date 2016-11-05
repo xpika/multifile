@@ -1,3 +1,4 @@
+{-# Language NoMonomorphismRestriction #-}
 module Main where
 
 import System.Process
@@ -6,9 +7,9 @@ import System.Directory
 
 import System.Environment
 import System.IO
-import Text.XML.HaXml
+import Text.XML.HaXml hiding (info,Parser)
 import Text.XML.HaXml.Escape
-import Text.XML.HaXml.XmlContent.Haskell
+import Text.XML.HaXml.XmlContent.Haskell hiding (Parser)
  
 import Extsubset
 import Data.Either
@@ -22,6 +23,8 @@ import Data.Either
 import Control.Monad.Trans.Except
 import Control.Monad.Trans.Class 
 import Data.Char
+
+import Options.Applicative
 
 isRegularPath :: FilePath -> Bool 
 isRegularPath f = f /= "." && f /= ".."
@@ -69,9 +72,9 @@ g =
          i < 10 || (10<i && i<32) || i >= 127 ||
             case ch of
                '\'' -> True
-               '\"' -> True
-               '&' -> True
-               '<' -> True
+               '\"' -> True 
+               '&' -> True 
+               '<' -> True 
                '>' -> True
                _ -> False
       )
@@ -81,10 +84,11 @@ myFun (CString a b c) | any g b =  CString a (cdatafy b) c
 myFun (CElem e i) = CElem (myFun' e) i
 myFun  x = x
 
-myFun' (Elem a b cs) = Elem a b (map myFun cs)
+myFun' (Elem a b cs) = Elem a b (map myFun cs) 
 
 
-main :: IO ()
+run x = print 2
+
 main = do 
        args <- getArgs
        case args of 
@@ -93,9 +97,9 @@ main = do
            extractMultiFile x
          x -> z x
  where 
- z ("-create":xs) = create xs
+ z ("--create":xs) = create xs
  z ("-c":xs) = create xs
- z ("-edit":xs) = edit xs
+ z ("--edit":xs) = edit xs
  z ("-e":xs) = edit xs
  z _             = putStr "unknown usage"
 
@@ -112,7 +116,7 @@ edit xs = do
     system (editor++" "++filename)
     x <- readFile filename
     extractMultiFile x
-  (Left errorMsg) -> putStr errorMsg 
+  (Left errorMsg) -> putStrLn ("file: "++errorMsg++" does not exist.")
  return ()
 
 extractMultiFile x = do 

@@ -10,7 +10,7 @@ name:                multifile
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.3
+version:             0.1.0.4
 
 -- A short (one-line) description of the package.
 synopsis: create many files from one
@@ -60,7 +60,7 @@ executable multifile
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10 , HaXml < 10000 , directory <10000 , pretty <10000,transformers <10000 , process<10000
+  build-depends:       base >=4.9 && <4.10 , HaXml < 10000 , directory <10000 , pretty <10000,transformers <10000 , process<10000,optparse-applicative <10000    
   
   -- Directories containing source files.
   hs-source-dirs:      src
