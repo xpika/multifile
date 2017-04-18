@@ -28,6 +28,20 @@ import Data.Char
 
 import Options.Applicative
 
+main = do 
+       args <- getArgs
+       case args of 
+         [] -> do
+           x <- getContents       
+           extractMultiFile x
+         x -> z x
+ where 
+ z ("--create":xs) = create xs
+ z ("-c":xs) = create xs
+ z ("--edit":xs) = edit xs
+ z ("-e":xs) = edit xs
+ z _             = putStr "unknown usage"
+
 isRegularPath :: FilePath -> Bool 
 isRegularPath f = f /= "." && f /= ".."
 
@@ -91,19 +105,7 @@ myFun' (Elem a b cs) = Elem a b (map myFun cs)
 
 run x = print 2
 
-main = do 
-       args <- getArgs
-       case args of 
-         [] -> do
-           x <- getContents       
-           extractMultiFile x
-         x -> z x
- where 
- z ("--create":xs) = create xs
- z ("-c":xs) = create xs
- z ("--edit":xs) = edit xs
- z ("-e":xs) = edit xs
- z _             = putStr "unknown usage"
+
 
 edit xs = do
  dir <- getTemporaryDirectory
