@@ -65,6 +65,7 @@ create'' dirStack xs = do
      return files'
    else if properFile then do
      content <- lift $ readFile filePath'
+     --lift $ putStr ("{"++content++"}")
      return [File (File_Attrs filePath') content ]
    else  
      throwE filePath'
@@ -72,7 +73,11 @@ create'' dirStack xs = do
 
 create' files =runExceptT $ do 
    files' <- create'' [] files
-   return $ (render $ htmlprint $ map myFun $ toContents $ Multifile files')
+   let a  = toContents (Multifile files')
+   let b = map myFun a
+   let c = htmlprint2 b
+   --lift $ print  c
+   return $ (render $ c)
 
 
 s = xmlEscapeContent  stdXmlEscaper 
@@ -137,11 +142,11 @@ extractMultiFile x = do
         either print processFiles p
 
 processFiles (Multifile xs) = mapM_ processFile xs
-processFile (File (File_Attrs path) content) = writeFile path content
+processFile (File (File_Attrs path) content) = do 
+   -- putStr ("("++content++")")
+   writeFile path content
 
 
-
-{-
 
 htmlprint2 :: [Content i] -> Pretty.Doc
 htmlprint2 = Pretty.cat . map cprint . foldrefs
@@ -176,7 +181,7 @@ htmlprint2 = Pretty.cat . map cprint . foldrefs
                                         Pretty.text (printableName n) Pretty.<>
                                         attrs as                      Pretty.<>
                                         Pretty.text ">")
-                                    , Pretty.nest 4 (htmlprint cs)
+                                    , Pretty.nest 4 (htmlprint2 cs)
                                     , ( Pretty.text "</"              Pretty.<>
                                         Pretty.text (printableName n) Pretty.<>
                                         Pretty.text ">" )
@@ -210,4 +215,3 @@ htmlprint2 = Pretty.cat . map cprint . foldrefs
                                  | otherwise = select q (y:ls,ys)
 
 
--}
