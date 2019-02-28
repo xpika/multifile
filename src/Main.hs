@@ -36,11 +36,18 @@ main = do
            extractMultiFile x
          x -> z x
  where 
+ z ("--help":xs) = help
+ z ("--h":xs) = help
  z ("--create":xs) = create xs
  z ("-c":xs) = create xs
  z ("--edit":xs) = edit xs
  z ("-e":xs) = edit xs
  z _             = putStr "unknown usage"
+ help = do putStrLn "usage:"
+           putStrLn "multifile <NOARGS> # extract the multifile"
+           putStrLn "multifile --create (or -c) [FILES]"
+           putStrLn "multifile --edit (or -e) [FILES] # open multiple files via editor"
+           putStrLn "multifile --help (or -h) # show this help message"
 
 isRegularPath :: FilePath -> Bool 
 isRegularPath f = f /= "." && f /= ".."
