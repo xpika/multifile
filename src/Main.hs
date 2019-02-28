@@ -29,25 +29,23 @@ import Data.Char
 import Options.Applicative
 
 main = do 
-       args <- getArgs
-       case args of 
-         [] -> do
-           x <- getContents       
-           extractMultiFile x
-         x -> z x
+ args <- getArgs
+ case args of  
+  []              -> do x <- getContents       
+                        extractMultiFile x
+  ("--create":xs) -> create xs
+  ("-c":xs)       -> create xs
+  ("--edit":xs)   -> edit xs
+  ("-e":xs)       -> edit xs
+  ("--help":xs)   -> help
+  ("--h":xs)      -> help
+  _                ->  putStr "unknown usage"
  where 
- z ("--help":xs) = help
- z ("--h":xs) = help
- z ("--create":xs) = create xs
- z ("-c":xs) = create xs
- z ("--edit":xs) = edit xs
- z ("-e":xs) = edit xs
- z _             = putStr "unknown usage"
- help = do putStrLn "usage:"
-           putStrLn "multifile <NOARGS> # extract the multifile"
-           putStrLn "multifile --create (or -c) [FILES]"
-           putStrLn "multifile --edit (or -e) [FILES] # open multiple files via editor"
-           putStrLn "multifile --help (or -h) # show this help message"
+  help = do putStrLn "usage:"
+            putStrLn "multifile <NOARGS> # extract the multifile"
+            putStrLn "multifile --create (or -c) [FILES]"
+            putStrLn "multifile --edit (or -e) [FILES] # open multiple files via editor"
+            putStrLn "multifile --help (or -h) # show this help message"
 
 isRegularPath :: FilePath -> Bool 
 isRegularPath f = f /= "." && f /= ".."
@@ -113,7 +111,6 @@ myFun' (Elem a b cs) = Elem a b (map myFun cs)
 run x = print 2
 
 
-
 edit xs = do
  dir <- getTemporaryDirectory
  (filename,handle) <- openTempFile dir "a"
@@ -123,10 +120,15 @@ edit xs = do
   (Right multifile) -> do
     writeFile filename multifile
     maybeEditor <- lookupEnv "EDITOR"
+    time1 <- getModificationTime filename
     let editor = fromMaybe "vim" maybeEditor
     system (editor++" "++filename)
-    x <- readFile filename
-    extractMultiFile x
+    time2 <- getModificationTime filename
+    if time2 > time1 then do
+      x <- readFile filename
+      extractMultiFile x
+    else
+      return ()
   (Left errorMsg) -> putStrLn ("file: "++errorMsg++" does not exist.")
  return ()
 
