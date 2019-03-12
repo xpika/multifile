@@ -145,7 +145,7 @@ processFiles (Multifile xs) = mapM_ processFile xs
 processFile (File (File_Attrs path) content) = do 
    -- putStr ("("++content++")")
    -- remove inserted newline Character
-   writeFile path content
+   writeFile path (drop 1 content)
 
 
 
@@ -160,7 +160,7 @@ htmlprint2 = Pretty.cat . map cprint . foldrefs
   ref (RefChar s) = show s
 
   cprint (CElem e _)      = element e
-  cprint (CString ws s _) = Pretty.text s
+  cprint (CString ws s _) = Pretty.text "\n" Pretty.<> Pretty.text s
   cprint (CRef r _)       = Pretty.text ("&"++ref r++";")
   cprint (CMisc _ _)      = Pretty.empty
 
