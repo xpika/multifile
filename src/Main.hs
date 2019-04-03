@@ -181,7 +181,7 @@ htmlprint2 = Pretty.cat . map cprint . foldrefs
                                         Pretty.text (printableName n) Pretty.<>
                                         attrs as                      Pretty.<>
                                         Pretty.text ">")
-                                    , Pretty.nest 4 (htmlprint2 cs)
+                                    , Pretty.nest 0 (htmlprint2 cs)
                                     , ( Pretty.text "</"              Pretty.<>
                                         Pretty.text (printableName n) Pretty.<>
                                         Pretty.text ">" )
