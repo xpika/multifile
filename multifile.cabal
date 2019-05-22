@@ -1,5 +1,5 @@
 name: multifile
-version: 0.1.0.6
+version: 0.1.0.7
 cabal-version: >=1.10
 build-type: Simple
 license: BSD3
@@ -22,7 +22,7 @@ source-repository head
 executable multifile
     main-is: Main.hs
     build-depends:
-        base >=4.9 && <4.10,
+        base <10000,
         HaXml <10000,
         directory <10000,
         pretty <10000,
